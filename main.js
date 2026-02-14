@@ -14,15 +14,16 @@ import { generateSummary } from '../logic/summarizer.js';
 /**
  * Runs the full audit process for a given domain.
  * @param {string} domain - The cleaned domain name (e.g., "google.com")
+ * @param {number} tabId - The ID of the tab to audit.
  * @returns {Promise<Object>} The final audit report for the UI.
  */
-export async function runAudit(domain) {
+export async function runAudit(domain, tabId) {
   try {
     // 1. Load the previously saved version of the ToS from storage
     const baselineText = await loadBaseline(domain);
-    
+
     // 2. Request the current visible text from the content script
-    const currentText = await fetchCurrent();
+    const currentText = await fetchCurrent(tabId);
 
     if (!currentText) {
       throw new Error('Failed to retrieve current page text. Ensure the page is fully loaded.');
@@ -61,7 +62,7 @@ export async function runAudit(domain) {
 
   } catch (error) {
     console.error('Echo-Audit [main.js] Error:', error);
-    
+
     // Return a safe error state so the UI doesn't break
     return {
       domain: domain || 'Unknown',

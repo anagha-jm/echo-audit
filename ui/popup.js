@@ -49,8 +49,33 @@ const updateUI = (data) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'AUDIT_COMPLETED' && message.payload) {
     updateUI(message.payload);
+  } else if (message.type === 'AUDIT_ERROR') {
+    document.getElementById('summary').textContent = `Error: ${message.error}`;
   }
-  
+
   // Return true to keep the message channel open for async responses if needed
   return true;
+});
+
+// Initiate audit when popup opens
+document.addEventListener('DOMContentLoaded', () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs && tabs.length > 0) {
+      const activeTab = tabs[0];
+      const domain = new URL(activeTab.url).hostname.replace('www.', ''); // Simple extraction for init
+
+      // Set initial loading state
+      document.getElementById('domain').textContent = "Scanning " + domain + "...";
+      document.getElementById('summary').textContent = "Analyzing policies...";
+
+      chrome.runtime.sendMessage({
+        action: 'START_AUDIT',
+        payload: {
+          domain: domain,
+          tabId: activeTab.id,
+          url: activeTab.url
+        }
+      });
+    }
+  });
 });

@@ -3,48 +3,46 @@
  * Central controller for the Chrome Extension (Manifest V3).
  */
 
-import { getDomainFromTab } from './detector.js';
-import { runAudit } from './main.js';
+import { runAudit } from '../main.js';
+
 
 /**
- * Listens for the extension icon click (Action).
- * Triggers the domain extraction, audit process, and broadcasts results.
+ * Listens for messages from the popup or other components.
+ * specific action: 'START_AUDIT'
  */
-chrome.action.onClicked.addListener(async (tab) => {
-  try {
-    // 1. Extract the clean domain name from the active tab
-    const domain = getDomainFromTab(tab);
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'START_AUDIT') {
+    const { domain, tabId } = request.payload;
 
-    if (!domain) {
-      console.warn('Audit skipped: Invalid or unsupported URL.');
+    if (!domain || !tabId) {
+      console.warn('Audit skipped: Missing domain or tabId.');
       return;
     }
 
-    // 2. Execute the audit logic defined in main.js
-    // runAudit is assumed to be an async function returning the audit data
-    const auditResults = await runAudit(domain);
+    // Run the audit asynchronously
+    runAudit(domain, tabId)
+      .then(auditResults => {
+        // Broadcast results back to the popup
+        chrome.runtime.sendMessage({
+          type: 'AUDIT_COMPLETED',
+          payload: {
+            domain,
+            results: auditResults,
+            timestamp: Date.now()
+          }
+        }).catch(err => {
+          console.log('Results sent, but no active popup listener found.', err);
+        });
+      })
+      .catch(error => {
+        console.error('Extension Background Error:', error);
+        chrome.runtime.sendMessage({
+          type: 'AUDIT_ERROR',
+          error: error.message
+        }).catch(() => { /* Ignore failure */ });
+      });
 
-    // 3. Send the processed results to the popup or other extension components
-    // We check for listeners to prevent "Uncaught (in promise) Error: Receiving end does not exist"
-    chrome.runtime.sendMessage({
-      type: 'AUDIT_COMPLETED',
-      payload: {
-        domain,
-        results: auditResults,
-        timestamp: Date.now()
-      }
-    }).catch(err => {
-      // It is normal for this to fail if the popup is not currently open
-      console.log('Results sent, but no active popup listener found.');
-    });
-
-  } catch (error) {
-    // Handle unexpected errors during the background workflow
-    console.error('Extension Background Error:', error);
-    
-    chrome.runtime.sendMessage({
-      type: 'AUDIT_ERROR',
-      error: error.message
-    }).catch(() => { /* Ignore failure to send error message */ });
+    // Return true to indicate we will respond asynchronously (though we are using sendMessage here)
+    return true;
   }
 });
