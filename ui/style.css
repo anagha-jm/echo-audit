@@ -1,0 +1,117 @@
+/* style.css */
+
+:root {
+  --bg-color: #f8f9fa;
+  --card-bg: #ffffff;
+  --text-main: #212529;
+  --text-muted: #6c757d;
+  --border-color: #e9ecef;
+  --safe: #28a745;
+  --warning: #fd7e14;
+  --danger: #dc3545;
+  --radius: 8px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  width: 320px;
+  margin: 0;
+  padding: 16px;
+  background-color: var(--bg-color);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.main-container {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+header h1 {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  text-align: center;
+  color: var(--text-main);
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+section {
+  margin-bottom: 16px;
+}
+
+section:last-child {
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 0 0 6px 0;
+}
+
+#domain {
+  font-weight: 600;
+  word-break: break-all;
+}
+
+/* Status & Severity Badges */
+#changeStatus, #severity {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Severity Colors */
+.severity-safe, .status-stable {
+  background-color: #e6ffed;
+  color: var(--safe);
+}
+
+.severity-warning {
+  background-color: #fff5eb;
+  color: var(--warning);
+}
+
+.severity-danger, .status-changed {
+  background-color: #ffeef0;
+  color: var(--danger);
+}
+
+/* Risk List Styling */
+#riskList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#riskList li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+#riskList li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+}
+
+#summary {
+  font-size: 0.9rem;
+  color: #495057;
+  background: var(--bg-color);
+  padding: 10px;
+  border-radius: 4px;
+  margin: 0;
+}

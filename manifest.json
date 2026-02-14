@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Echo-Audit",
+  "version": "1.0",
+  "description": "A browser extension that analyzes website Terms of Service and alerts users about risks and changes.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "extension/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "extension/content.js"
+      ]
+    }
+  ],
+  "action": {
+    "default_popup": "ui/popup.html",
+    "default_icon": {
+      "16": "assets/icon.png",
+      "48": "assets/icon.png",
+      "128": "assets/icon.png"
+    }
+  ],
+  "icons": {
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
+  }
+}
