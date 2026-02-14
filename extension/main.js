@@ -5,11 +5,11 @@
  * change comparison, risk scanning, and summarization.
  */
 
-import { loadBaseline } from './logic/loader.js';
-import { fetchCurrent } from './logic/fetcher.js';
-import { compareTexts } from './logic/comparator.js';
-import { scanRisks } from './logic/riskScanner.js';
-import { generateSummary } from './logic/summarizer.js';
+import { loadBaseline } from '../logic/loader.js';
+import { fetchCurrent } from '../logic/fetcher.js';
+import { compareTexts } from '../logic/comparator.js';
+import { scanRisks } from '../logic/riskScanner.js';
+import { generateSummary } from '../logic/summarizer.js';
 
 /**
  * Runs the full audit process for a given domain.
