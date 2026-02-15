@@ -36,7 +36,12 @@ export async function runAudit(domain, tabId) {
     const riskResults = scanRisks(currentText);
 
     // 5. Generate a simplified human-readable summary
-    const summary = await generateSummary(currentText);
+    // If changes are detected, summarize the changes. Otherwise, summarize the current text.
+    const textToSummarize = (comparison.changesDetected && comparison.changedSections)
+      ? comparison.changedSections
+      : currentText;
+
+    const summary = await generateSummary(textToSummarize);
 
     // 6. Update the baseline in storage for the next time this site is visited
     // This ensures 'changesDetected' works accurately on the next run.
